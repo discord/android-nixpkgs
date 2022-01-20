@@ -22,6 +22,9 @@ stdenv.mkDerivation (rec {
     inherit (package) sources;
   };
 
+  # Fixup attempts to strip executables and libraries by default, which causes problems on M1 macs.
+  dontFixup = true;
+
   setSourceRoot = ''
     sourceRoot="$out"
   '';
