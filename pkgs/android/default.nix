@@ -1,7 +1,7 @@
-{ pkgs, lib }:
+{ pkgs, lib, system }:
 
 lib.makeScope pkgs.newScope (self: with self; rec {
-  fetchandroid = callPackage ./fetch.nix { };
+  fetchandroid = callPackage ./fetch.nix { inherit system; };
   mkGeneric = callPackage ./generic.nix { };
   mkBuildTools = callPackage ./build-tools.nix { };
   mkCmdlineTools = callPackage ./cmdline-tools.nix { };

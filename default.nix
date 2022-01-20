@@ -5,7 +5,7 @@
 
 with pkgs;
 let
-  androidSdk = callPackage ./pkgs/android { };
+  androidSdk = callPackage ./pkgs/android { inherit system; };
 
   isSupported = _: pkg:
     (!lib.isDerivation pkg) ||

@@ -1,4 +1,4 @@
-{ stdenv, lib, fetchurl, unzip }:
+{ stdenv, lib, fetchurl, unzip, system }:
 
 { sources, ... } @ args:
 let
