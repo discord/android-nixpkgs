@@ -1,4 +1,4 @@
-{ stdenv, lib, fetchandroid, writeText, unzip }:
+{ stdenv, lib, fetchandroid, writeText, unzip, system }:
 
 args: package:
 let
@@ -23,7 +23,7 @@ stdenv.mkDerivation (rec {
   };
 
   # Fixup attempts to strip executables and libraries by default, which causes problems on M1 macs.
-  dontFixup = true;
+  dontFixup = lib.hasInfix "darwin" system;
 
   setSourceRoot = ''
     sourceRoot="$out"

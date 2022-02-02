@@ -2,7 +2,7 @@
 
 lib.makeScope pkgs.newScope (self: with self; rec {
   fetchandroid = callPackage ./fetch.nix { inherit system; };
-  mkGeneric = callPackage ./generic.nix { };
+  mkGeneric = callPackage ./generic.nix { inherit system; };
   mkBuildTools = callPackage ./build-tools.nix { };
   mkCmdlineTools = callPackage ./cmdline-tools.nix { };
   mkEmulator = callPackage ./emulator.nix { };
