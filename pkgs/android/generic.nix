@@ -23,7 +23,7 @@ stdenv.mkDerivation (rec {
   };
 
   # Fixup attempts to strip executables and libraries by default, which causes problems on M1 macs.
-  dontFixup = true;
+  dontFixup = targetPlatform.isDarwin;
 
   setSourceRoot = ''
     sourceRoot="$out"
