@@ -3,7 +3,10 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    devshell.url = "github:numtide/devshell";
+    devshell = {
+      url = "github:numtide/devshell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -20,7 +23,7 @@
 
       hmModule = self.hmModules.android;
 
-      overlay = final: prev:
+      overlays.default = final: prev:
         let
           android = sdkPkgsFor final;
         in
@@ -29,15 +32,13 @@
           androidSdk = android.sdk;
         };
 
-      templates.android = {
+      templates.default = {
         path = ./template;
         description = "Android application or library";
       };
-
-      defaultTemplate = self.templates.android;
     }
     //
-    flake-utils.lib.eachSystem [ "x86_64-darwin" "x86_64-linux" ] (system:
+    flake-utils.lib.eachSystem [ "aarch64-darwin" "x86_64-darwin" "x86_64-linux" ] (system:
       let
         pkgs = import nixpkgs {
           inherit system;
@@ -46,6 +47,9 @@
             overlays = [
               (devshell.overlay)
               (self.overlay)
+            ];
+            permittedInsecurePackages = [
+              "python-2.7.18.7"
             ];
           };
         };
@@ -71,11 +75,12 @@
 
           sdk = self.sdk.${system} (sdkPkgs: with sdkPkgs; [
             cmdline-tools-latest
-            build-tools-32-0-0
+            build-tools-34-0-0
             emulator
-            ndk-bundle
+            ndk-26-1-10909125
             platform-tools
-            platforms-android-32
+            platforms-android-34
+            tools
           ]);
         };
 

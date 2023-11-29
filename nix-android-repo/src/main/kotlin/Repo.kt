@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.io.ByteArrayOutputStream
+import java.io.FileNotFoundException
 import java.io.InputStream
 import java.io.PrintStream
 import java.net.URL
@@ -65,7 +66,7 @@ class NixDownloader : Downloader {
         return if (!markSupported()) {
             try {
                 readBytes().inputStream().also {
-                    try { close() } catch (e: Exception) {}
+                    try { close() } catch (_: Exception) {}
                 }
             } catch (e: Exception) {
                 this
@@ -132,8 +133,12 @@ class NixRepoManager(
         runBlocking {
             for (source in sources) {
                 launch(Dispatchers.IO) {
-                    val manifest = downloader.downloadAndStream(URL(source.url), progress)
-                    parseSource(source, manifest, parsedPackages, legacyParsedPackages)
+                    try {
+                        val manifest = downloader.downloadAndStream(URL(source.url), progress)
+                        parseSource(source, manifest, parsedPackages, legacyParsedPackages)
+                    } catch (e: FileNotFoundException) {
+                        progress.logWarning("Not found: ${source.url}")
+                    }
                 }
             }
         }
@@ -157,7 +162,13 @@ class NixRepoManager(
         result: MutableMap<RepositorySource, Collection<RemotePackage>>,
         legacyResult: MutableMap<RepositorySource, Collection<RemotePackage>>
     ) {
-        val repo = SchemaModuleUtil.unmarshal(manifest, source.permittedModules, true, progress) as? Repository
+        val repo = SchemaModuleUtil.unmarshal(
+            manifest,
+            source.permittedModules,
+            true,
+            progress,
+            source.url
+        ) as? Repository
         if (repo != null) {
             result[source] = repo.remotePackage
         } else {
