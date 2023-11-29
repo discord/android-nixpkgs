@@ -1,4 +1,4 @@
-{ stdenv, lib, mkGeneric, autoPatchelfHook, python }:
+{ stdenv, lib, mkGeneric, autoPatchelfHook }:
 
 mkGeneric (lib.optionalAttrs stdenv.isLinux
   {
@@ -7,10 +7,6 @@ mkGeneric (lib.optionalAttrs stdenv.isLinux
     ];
 
     buildInputs = [
-      python
-    ];
-
-    runtimeDependencies = [
       stdenv.cc.cc.lib
     ];
   } // {

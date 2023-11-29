@@ -8,7 +8,11 @@ Updated daily from Google's Android SDK repositories.
 
 ### Requirements
 
-Currently we support Linux and macOS on `x86_64` platforms only.
+Currently we support the following platforms:
+
+- `aarch64-darwin`: MacOS on Apple Silicon
+- `x86_64-darwin`: MacOS on x86-64
+- `x86_64-linux`: Linux on x86-64
 
 You should have `nix` installed, either because your're awesome and run NixOS, or you have installed
 it from [nixos.org](https://nixos.org/download.html).
@@ -40,9 +44,9 @@ let
 in
 android-nixpkgs.sdk (sdkPkgs: with sdkPkgs; [
   cmdline-tools-latest
-  build-tools-32-0-0
+  build-tools-34-0-0
   platform-tools
-  platforms-android-31
+  platforms-android-34
   emulator
 ])
 ```
@@ -66,9 +70,9 @@ let
 
   android-sdk = android-nixpkgs.sdk (sdkPkgs: with sdkPkgs; [
     cmdline-tools-latest
-    build-tools-32-0-0
+    build-tools-34-0-0
     platform-tools
-    platforms-android-31
+    platforms-android-34
     emulator
   ]);
 
@@ -102,9 +106,9 @@ let
 in
 android-nixpkgs.sdk (sdkPkgs: with sdkPkgs; [
   cmdline-tools-latest
-  build-tools-31-0-0
+  build-tools-34-0-0
   platform-tools
-  platforms-android-31
+  platforms-android-34
   emulator
 ])
 ```
@@ -142,22 +146,21 @@ for building Android apps or libraries.
   outputs = { self, android-nixpkgs }: {
     packages.x86_64-linux.android-sdk = android-nixpkgs.sdk (sdkPkgs: with sdkPkgs; [
       cmdline-tools-latest
-      build-tools-32-0-0
+      build-tools-34-0-0
       platform-tools
-      platforms-android-31
+      platforms-android-34
       emulator
     ]);
   };
 }
 ```
 
-A project template is provided via `templates.android`. This also provides a `devShell` with Android
-Studio and a configured Android SDK.
+A project template is provided via `templates.android`. This also provides a `devShell` with a configured Android SDK; on Linux platforms, Android Studio is also provided.
 
 ```
-nix flake init github:tadfisher/android-nixpkgs
+nix flake init -t github:tadfisher/android-nixpkgs
 nix develop
-android-studio
+android-studio    # available on x86_64-linux platforms
 ```
 
 See `flake.nix` in the generated project to customize the SDK and Android Studio version.
@@ -192,11 +195,11 @@ in
   android-sdk.path = "${config.home.homeDirectory}/.android/sdk";
 
   android-sdk.packages = sdkPkgs: with sdkPkgs; [
-    build-tools-31-0-0
+    build-tools-34-0-0
     cmdline-tools-latest
     emulator
-    platforms-android-31
-    sources-android-31
+    platforms-android-34
+    sources-android-34
   ];
 }
 ```
@@ -234,17 +237,18 @@ An example `flake.nix`:
               android-nixpkgs.hmModule
 
               {
+                inherit config lib pkgs;
                 android-sdk.enable = true;
 
                 # Optional; default path is "~/.local/share/android".
                 android-sdk.path = "${config.home.homeDirectory}/.android/sdk";
 
                 android-sdk.packages = sdk: with sdk; [
-                  build-tools-31-0-0
+                  build-tools-34-0-0
                   cmdline-tools-latest
                   emulator
-                  platforms-android-31
-                  sources-android-31
+                  platforms-android-34
+                  sources-android-34
                 ];
               }
             ];
