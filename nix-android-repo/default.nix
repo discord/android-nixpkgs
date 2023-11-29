@@ -16,8 +16,6 @@ let
 
 in
 rec {
-  gradle = callPackage ./gradle.nix { };
-
   gradle-properties = runCommand "gradle.properties"
     {
       mavenRepo = "file://${maven-repo}";
@@ -36,7 +34,7 @@ rec {
   };
 
   update-locks = callPackage ./update-locks.nix {
-    inherit (final.haskellPackages) xml-to-json;
+    inherit (final.haskellPackages) xml-to-json-fast;
     inherit repos;
     fetchSources = true;
   };

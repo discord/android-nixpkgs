@@ -43,8 +43,4 @@ tasks {
                 .filterIsInstance<ResolvedArtifactResult>()
         }
     }
-
-    wrapper {
-        gradleVersion = "7.3.1"
-    }
 }
